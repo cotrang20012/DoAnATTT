@@ -1,6 +1,7 @@
 
 #%%
 from tkinter import *
+from tkinter import messagebox
 from tkinter import ttk
 from gtts import gTTS
 import os
@@ -13,16 +14,32 @@ import threading
 import tkinter as tk
 from datetime import date, datetime
 from tkinter import filedialog
+from functools import partial
 root = Tk()
 frm = ttk.Frame(root,padding=100)
 frm.grid()
 #%%
+UserLst = {"Brad":"123","Emma":"321","Robert":"robert"}
+
+def validateLogin(username, password):
+	
+    try:
+        if UserLst[username.get()] == password.get():
+            messagebox.showinfo("","Welcome " + username.get())
+        # pass
+        #
+    except:
+        messagebox.showinfo("","Please try again")
+    finally:
+        pass
+
 def FacialRecognitionWithWebcam():
     ## duyệt từng hình ảnh có trong thư mục và encode các đặc tính của nó sau đó đưa vào một list để lưu trữ
-    path = 'HinhAnh'
+    path = 'C:\\Users\\khoa9\\Documents\\GitHub\\DoAnATTT\\rieng tu\\HinhAnh'
     listofImg = []
     listofName = []
 
+    
     listofImgInDir = os.listdir(path)
 
     for img in listofImgInDir: #duyệt từng hình ảnh trong thư mục và lưu lại vào list hình ảnh và tên
@@ -43,7 +60,6 @@ def FacialRecognitionWithWebcam():
 
     #lấy hình ảnh từ webcam
     webcam = cv2.VideoCapture(0)
-
     while True:
         #đọc khung ảnh hiện tại từ webcam
         place_holder,frame = webcam.read()
@@ -68,10 +84,13 @@ def FacialRecognitionWithWebcam():
             faceDis = face_recognition.face_distance(listKnowEncode,encodingCurrent) #tính toán sự khác biệt giữa bức ảnh đc đưa vào và ảnh trong thư mục
             matchIndex = np.argmin(faceDis)  #phải lấy khuôn mặt có độ lệch nhỏ nhất (gần giống với khuôn mặt trong thư mục nhất)
             if matches[matchIndex]:
-                x,y,w,h =  faceCorCurrent
-                x,y,w,h = x*4,y*4,w*4,h*4
-                Name = listofName[matchIndex].upper()
-                cv2.putText(frame,Name,(h+6,w-6),cv2.FONT_ITALIC,1,(0,255,0),2)                
+                #cv2.destroyAllWindows()
+                Name = listofName[matchIndex]
+                messagebox.showinfo("","Welcome " + Name)
+                # x,y,w,h =  faceCorCurrent
+                # x,y,w,h = x*4,y*4,w*4,h*4
+                
+                # cv2.putText(frame,Name,(h+6,w-6),cv2.FONT_ITALIC,1,(0,255,0),2)                
 
 
         #xem hình ảnh
@@ -79,11 +98,22 @@ def FacialRecognitionWithWebcam():
         key = cv2.waitKey(1) #tạm dừng chương trình
         if key == 27: #nhấn ESC để dừng chương trình
             break
-    cv2.destroyAllWindows()
+usernameLabel = Label(root, text="User Name").grid(row=0, column=0)
+username = StringVar()
+usernameEntry = Entry(root, textvariable=username).grid(row=0, column=1)  
 
-ttk.Button(frm,text="Đăng nhập",command= FacialRecognitionWithWebcam).grid(column=0,row =0)
-ttk.Button(frm,text="quit",command=root.destroy).grid(column=1,row =0)
+#password label and password entry box
+passwordLabel = Label(root,text="Password").grid(row=1, column=0)  
+password = StringVar()
+passwordEntry = Entry(root, textvariable=password, show='*').grid(row=1, column=1)  
 
+# ttk.Button(frm,text="Đăng nhập khác",command= FacialRecognitionWithWebcam).grid(column=0,row =0)
+# ttk.Button(frm,text="quit",command=root.destroy).grid(column=1,row =0)
+validateLogin = partial(validateLogin, username, password)
+
+#login button
+loginButton = Button(root, text="Login", command=validateLogin).grid(row=4, column=0)  
+loginButtonFace = Button(root,text="FaceId",command=FacialRecognitionWithWebcam).grid(row=4,column=1)
 '''Label(root,text = "Đăng nhập").pack()
 
 def myClick():
