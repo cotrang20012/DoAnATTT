@@ -16,7 +16,7 @@ import numpy as np
 
 def FacialRecognitionWithWebcam(frame):
     ## duyệt từng hình ảnh có trong thư mục và encode các đặc tính của nó sau đó đưa vào một list để lưu trữ
-    path = 'assets'
+    path = 'C:\\Users\\khoa9\\Documents\\GitHub\\DoAnATTT\\rieng tu\\HinhAnh'
     listofImg = []
     listofName = []
 
